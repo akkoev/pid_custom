@@ -1,6 +1,8 @@
 #include "pid_autotuner.h"
 #include "esphome/core/log.h"
 
+#include <inttypes.h>
+
 namespace esphome {
 namespace pid {
 
@@ -103,7 +105,7 @@ PIDAutotuner::PIDAutotuneResult PIDAutotuner::update(float setpoint, float proce
       ESP_LOGVV(TAG, "  Amplitude is not convergent");
     }
     uint32_t phase = this->relay_function_.phase_count;
-    ESP_LOGVV(TAG, "  Phase %u, enough=%u", phase, enough_data_phase_);
+    ESP_LOGVV(TAG, "  Phase %" PRIu32 ", enough=%" PRIu32, phase, enough_data_phase_);
 
     if (this->enough_data_phase_ == 0) {
       this->enough_data_phase_ = phase;
@@ -179,8 +181,8 @@ void PIDAutotuner::dump_config() {
     ESP_LOGI(TAG, "  Autotune is still running!");
     ESP_LOGD(TAG, "  Status: Trying to reach %.2f °C", setpoint_ - relay_function_.current_target_error());
     ESP_LOGD(TAG, "  Stats so far:");
-    ESP_LOGD(TAG, "    Phases: %u", relay_function_.phase_count);
-    ESP_LOGD(TAG, "    Detected %u zero-crossings", frequency_detector_.zerocrossing_intervals.size());  // NOLINT
+    ESP_LOGD(TAG, "    Phases: %" PRIu32, relay_function_.phase_count);
+    ESP_LOGD(TAG, "    Detected %zu zero-crossings", frequency_detector_.zerocrossing_intervals.size());  // NOLINT
     ESP_LOGD(TAG, "    Current Phase Min: %.2f, Max: %.2f", amplitude_detector_.phase_min,
              amplitude_detector_.phase_max);
   }
@@ -245,10 +247,10 @@ void PIDAutotuner::OscillationFrequencyDetector::update(uint32_t now, float erro
 
   if (had_crossing) {
     // Had crossing above hysteresis threshold, record
-    ESP_LOGV(TAG, "Autotune: Detected Zero-Cross at %u", now);
+    ESP_LOGV(TAG, "Autotune: Detected Zero-Cross at %" PRIu32, now);
     if (this->last_zerocross != 0) {
       uint32_t dt = now - this->last_zerocross;
-      ESP_LOGV(TAG, "  dt: %u", dt);
+      ESP_LOGV(TAG, "  dt: %" PRIu32, dt);
       this->zerocrossing_intervals.push_back(dt);
     }
     this->last_zerocross = now;
