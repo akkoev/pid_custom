@@ -29,7 +29,7 @@ CONF_MIN_INTEGRAL = "min_integral"
 CONF_MAX_INTEGRAL = "max_integral"
 
 CONFIG_SCHEMA = cv.All(
-    climate.CLIMATE_SCHEMA.extend(
+    climate._CLIMATE_SCHEMA.extend(
         {
             cv.GenerateID(): cv.declare_id(PIDClimate),
             cv.Required(CONF_SENSOR): cv.use_id(sensor.Sensor),
